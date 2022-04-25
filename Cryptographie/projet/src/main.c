@@ -5,13 +5,23 @@
 int main(int argc, char *argv[]) {
 
     mpz_t a, n, h, r;
-    mpz_init_set_ui(a, 2000000);
-    mpz_init_set_ui(n, 1000000000001);
-    mpz_init_set(h, n-1);
+    mpz_init_set_ui(a, 19);
+    mpz_init_set_ui(n, 20);
+    mpz_init_set_ui(h, 1); 
+	mpz_init(r);
 
-    Square_Multiply(a, n, h, r);
+    Square_Multiply(r, a, n, h);
+	bool test;
 
-    gmp_printf("Ce qu'on a calculé %Zu\n", r);
+	test = Test_Fermat(r, 80);
+
+
+    gmp_printf("%Zu est %s \n", r, test?"premier":"composé");
+
+	mpz_clear(a);
+	mpz_clear(n);
+	mpz_clear(h);
+	mpz_clear(r);
     
 
     return 0;

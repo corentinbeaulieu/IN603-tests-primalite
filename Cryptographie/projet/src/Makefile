@@ -20,7 +20,7 @@ clean:
 
 .PHONY: memcheck
 memcheck: primalite 
-	valgrind --tool=memcheck --leak-check=yes $^
+	valgrind --tool=memcheck --track-origins=yes --leak-check=yes $^
 
 .PHONY: debug
 debug: primalite

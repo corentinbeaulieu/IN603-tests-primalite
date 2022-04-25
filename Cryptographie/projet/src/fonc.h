@@ -4,9 +4,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gmp.h>
+#include <stdbool.h>
+
+#define COMPOSE false
+#define PREMIER true
+
 
 void Square_Multiply (mpz_t, mpz_t, mpz_t, mpz_t);
 
+bool Test_Fermat (mpz_t, unsigned int);
 
 
 #endif
