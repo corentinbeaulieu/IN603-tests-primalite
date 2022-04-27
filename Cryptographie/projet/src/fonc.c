@@ -24,10 +24,10 @@ bool Test_Fermat(mpz_t n, unsigned int nbRep)  {
 	int i;
 	bool retour;
 	retour = PREMIER;
-	mpz_t a, un, nMoins1, nMoins2;
+	mpz_t a, res, nMoins1, nMoins2;
 
 	mpz_init(a);
-	mpz_init_set_ui(un, 1);
+	mpz_init(res);
 
 	mpz_init_set(nMoins1, n);
 	mpz_sub_ui(nMoins1, nMoins1, 1);
@@ -37,23 +37,22 @@ bool Test_Fermat(mpz_t n, unsigned int nbRep)  {
 
 	gmp_randstate_t state;
 	gmp_randinit_mt(state);
+	gmp_randseed_ui(state, time(0));
 
 
 	for(i = 0; i < nbRep; i++) {
 		mpz_urandomm(a, state, nMoins2);
 		mpz_add_ui(a, a, 1);
-		gmp_printf("a = %Zu\n", a);
 
-		Square_Multiply (a, a, n, nMoins1);
-		if(mpz_cmp(a, un)){
+		Square_Multiply (res, a, n, nMoins1);
+		if(mpz_cmp_ui(res, 1)){
 			retour = COMPOSE;
 			break;
 		}
 	}
-	gmp_printf("un = %Zu, nMoins1 = %Zu, nMoins2 =%Zu\n", un, nMoins1, nMoins2);
 	gmp_randclear(state);
 	mpz_clear(a);
-	mpz_clear(un);
+	mpz_clear(res);
 	mpz_clear(nMoins1);
 	mpz_clear(nMoins2);
 

@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <gmp.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define COMPOSE false
 #define PREMIER true
