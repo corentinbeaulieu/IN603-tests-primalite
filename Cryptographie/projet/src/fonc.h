@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <gmp.h>
 #include <stdbool.h>
 #include <time.h>
@@ -14,6 +15,8 @@
 void Square_Multiply (mpz_t, mpz_t, mpz_t, mpz_t);
 
 bool Test_Fermat (mpz_t, unsigned int);
+
+bool Test_Miller_Rabin(mpz_t, unsigned int);
 
 
 #endif

@@ -1,28 +1,51 @@
 #include "fonc.h"
-#include <gmp.h>
 
 
 int main(int argc, char *argv[]) {
 
-    mpz_t a, n, h, r;
-    mpz_init_set_ui(a, 19);
-    mpz_init_set_ui(n, 20);
-    mpz_init_set_ui(h, 1); 
-	mpz_init(r);
+    int option;
+    //bool optfichier = false;
+    bool miller = false;
 
-    Square_Multiply(r, a, n, h);
+
+    while( (option = getopt(argc, argv, "m")) != -1) {
+        printf("%d\n", option);
+        switch (option) {
+            /*case 'f':
+                FILE *file;
+                file = fopen(optarg, "r");
+                unsigned long int nbCar;
+                fseek(file, 0, SEEK_END);
+                nbCar = ftell(file);
+                nbCar++;
+                printf("%ld\n", nbCar);
+                rewind(file);
+                printf("nombre");
+                nombre = malloc(nbCar*sizeof(char));
+                fgets(nombre, nbCar, file);
+                
+                optfichier = true;
+                fclose(file);
+                break;*/
+
+            case 'm': 
+                miller = true;
+                break;
+        }
+    } 
+
+    mpz_t aTester;
+        mpz_init_set_str(aTester, argv[optind], 10);
+
+
 	bool test;
 
-	test = Test_Fermat(r, 80);
+    if(miller) test = Test_Miller_Rabin(aTester, 50);
+    else test = Test_Fermat(aTester, 50);
 
+    gmp_printf("Le nombre soumis est %s \n", test ? "premier" : "composé");
 
-    gmp_printf("%Zu est %s \n", r, test?"premier":"composé");
-
-	mpz_clear(a);
-	mpz_clear(n);
-	mpz_clear(h);
-	mpz_clear(r);
-    
+	mpz_clear(aTester);
 
     return 0;
 }
