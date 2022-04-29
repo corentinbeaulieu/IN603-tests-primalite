@@ -24,10 +24,8 @@ bool Test_Fermat(mpz_t n, unsigned int nbRep)  {
 	int i;
 	bool retour;
 	retour = PREMIER;
-	mpz_t a, res, nMoins1, nMoins2;
+	mpz_t nMoins1, nMoins2;
 
-	mpz_init(a);
-	mpz_init(res);
 
 	mpz_init_set(nMoins1, n);
 	mpz_sub_ui(nMoins1, nMoins1, 1);
@@ -40,19 +38,25 @@ bool Test_Fermat(mpz_t n, unsigned int nbRep)  {
 	gmp_randseed_ui(state, time(0));
 
 
+	#pragma omp parallel for shared(retour)
 	for(i = 0; i < nbRep; i++) {
+		if(!retour) continue;
+		mpz_t a, res;
+		mpz_init(a);
+		mpz_init(res);
+
 		mpz_urandomm(a, state, nMoins2);
 		mpz_add_ui(a, a, 1);
 
 		Square_Multiply (res, a, n, nMoins1);
 		if(mpz_cmp_ui(res, 1)){
 			retour = COMPOSE;
-			break;
 		}
+		mpz_clear(a);
+		mpz_clear(res);
+		printf("clears i = %d\n", i);
 	}
 	gmp_randclear(state);
-	mpz_clear(a);
-	mpz_clear(res);
 	mpz_clear(nMoins1);
 	mpz_clear(nMoins2);
 
@@ -64,7 +68,6 @@ void Decomposition (const mpz_t n, mpz_t s, mpz_t t) {
 	mpz_t x;
 	mpz_init_set(x, n);
 	mpz_sub_ui(x, x, 1);
-
 
 	while(!(mpz_fdiv_ui(x, 2))) {
 		mpz_div_ui(x, x, 2);
@@ -88,38 +91,54 @@ bool Test_Miller_Rabin (mpz_t n, unsigned int nbRep) {
 	gmp_randinit_mt(state);
 	gmp_randseed_ui(state, time(0));
 
+	mpz_t nMoins1;
+	mpz_init_set(nMoins1, n);
+	mpz_sub_ui(nMoins1, nMoins1, 1);
+
 	mpz_t nMoins2;
 	mpz_init_set(nMoins2, n);
 	mpz_sub_ui(nMoins2, nMoins2, 2);
 
-	mpz_t a, y;
-	mpz_init(a);
-	mpz_init(y);
+	
 
-	int i, j;
+	bool retour = PREMIER;
+	int i;
+	unsigned long int j;
+	#pragma omp parallel for shared(retour)
 	for(i = 0; i < nbRep; i++) {
-		printf("1\n");
+		if(!retour) continue;
+		mpz_t a, y;
+		mpz_init(a);
+		mpz_init(y);
+
 		mpz_urandomm(a, state, nMoins2);
 		mpz_add_ui(a, a, 1);
 
 		Square_Multiply(y, a, n, t);
 
-		if(mpz_cmp_ui(y, 1) && mpz_cmp_si(y, -1)) {
-			for(j = 0; mpz_cmp_si(s, j); j++) {
-				printf("2\n");
+		if(mpz_cmp_ui(y, 1) && mpz_cmp(y, nMoins1)) {
+			for(j = 0; mpz_cmp_ui(s, j); j++) {
+				if(!retour) break;
 				mpz_mul(y, y, y);
 				mpz_mod(y, y, n);
 				if(mpz_cmp_ui(y, 1))
-					return COMPOSE;
+					retour = COMPOSE;
 
-				if(mpz_cmp_si(y, -1))
+				if(mpz_cmp(y, nMoins1))
 					goto yModnEgalMoinsUn;
 			}
-			return COMPOSE;
-			yModnEgalMoinsUn:
-			printf("3\n");
+			retour = COMPOSE;		
 		}
+		yModnEgalMoinsUn:
+			mpz_clear(a);
+			mpz_clear(y);
 	}
 
-	return PREMIER;
+	gmp_randclear(state);
+	mpz_clear(s);
+	mpz_clear(t);
+	mpz_clear(nMoins1);
+	mpz_clear(nMoins2);
+	
+	return retour;
 }

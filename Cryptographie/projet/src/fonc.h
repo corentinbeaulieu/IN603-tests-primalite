@@ -7,6 +7,7 @@
 #include <gmp.h>
 #include <stdbool.h>
 #include <time.h>
+#include <omp.h>
 
 #define COMPOSE false
 #define PREMIER true
