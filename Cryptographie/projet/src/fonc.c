@@ -54,7 +54,6 @@ bool Test_Fermat(mpz_t n, unsigned int nbRep)  {
 		}
 		mpz_clear(a);
 		mpz_clear(res);
-		printf("clears i = %d\n", i);
 	}
 	gmp_randclear(state);
 	mpz_clear(nMoins1);
