@@ -22,10 +22,6 @@ clean:
 	rm -f fonc.o main.o
 	rm -f primalite
 
-.PHONY: memcheck
-memcheck: primalite 
-	valgrind --tool=memcheck --track-origins=yes --leak-check=full --show-leak-kinds=all ./$^ -f test.txt
-
 .PHONY: debug
 debug: primalite
 	gdb $^
