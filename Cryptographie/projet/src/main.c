@@ -3,7 +3,7 @@
 // Fonction principale du programme
 int main(int argc, char *argv[]) {
 
-    char *nombre = argv[argc-1];
+    char *nombre = argv[argc-2];
 
     //Gestion des options
     int option;
@@ -56,15 +56,23 @@ int main(int argc, char *argv[]) {
     } 
 
     // Gestion du mauvaise usage
-    if(optfichier && (optind != argc)) {
-        fprintf(stderr, "USAGE : %s -f chemin_fichier\n", argv[0]);
+    if(optfichier && (optind != argc-1) ) {
+        fprintf(stderr, "USAGE : %s -f chemin_fichier nb_iterations\n", argv[0]);
         free(nombre);
         return 13;
     }
 
-    if(!optfichier && (optind != argc-1)) {
-        fprintf(stderr, "USAGE : %s -[mx] nombre_a_tester\n", argv[0]);
+    if(!optfichier && (optind != argc-2) ) {
+        fprintf(stderr, "USAGE : %s -[mx] nombre_a_tester nb_iterations\n", argv[0]);
         return 14;
+    }
+
+    // Gestion du nombre d'itérations
+    unsigned int nbIter;
+    nbIter = atoi(argv[argc-1]);
+    if(!nbIter) {
+        fprintf(stderr, "ERREUR : %s n'est pas un nombre d'itérations valide\n", argv[argc-1]);
+        return 15;
     }
 
     // Initialisation du nombre à tester
@@ -77,8 +85,14 @@ int main(int argc, char *argv[]) {
     // Test de primalité
 	bool test;
 
-    if(miller) test = Test_Miller_Rabin(aTester, 30);
-    else test = Test_Fermat(aTester, 60);
+    if(!mpz_cmp_ui(aTester, 2)) {
+        test = PREMIER;
+    }
+
+    else {
+        if(miller) test = Test_Miller_Rabin(aTester, nbIter);
+        else test = Test_Fermat(aTester, nbIter);
+    }
 
     // Affichage du résultat
     gmp_printf("Le nombre soumis est %s \n", test ? "premier" : "composé");
