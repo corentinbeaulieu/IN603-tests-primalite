@@ -37,7 +37,7 @@ zip:
 	mkdir $(DIRNAME)/src
 	cp ../README.md $(DIRNAME)
 	cp $(FILES) $(DIRNAME)/src/
-	zip $(DIRNAME).zip $(DIRNAME)
+	zip -r $(DIRNAME).zip $(DIRNAME)
 	rm -rf $(DIRNAME)
 
 
